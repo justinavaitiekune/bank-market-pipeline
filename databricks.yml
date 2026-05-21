@@ -1,0 +1,31 @@
+bundle:
+  name: market-data-pipeline
+
+resources:
+  jobs:
+    market_data_job:
+      name: "Market Data Pipeline"
+      tasks:
+        - task_key: setup_env
+          notebook_task:
+            notebook_path: ./00_setup_environment.ipynb
+        - task_key: bronze_ingestion
+          depends_on:
+            - task_key: setup_env
+          notebook_task:
+            notebook_path: ./01_bronze_ingestion.ipynb
+        - task_key: silver_transformation
+          depends_on:
+            - task_key: bronze_ingestion
+          notebook_task:
+            notebook_path: ./02_silver_transformation.ipynb
+        - task_key: gold_transformation
+          depends_on:
+            - task_key: silver_transformation
+          notebook_task:
+            notebook_path: ./03_gold_transformation.ipynb
+        - task_key: data_quality
+          depends_on:
+            - task_key: gold_transformation
+          notebook_task:
+            notebook_path: ./04_data_quality_tests.ipynb
