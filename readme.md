@@ -41,7 +41,7 @@ This project is orchestrated using **Databricks Workflows (Jobs)** and **Databri
 ### Prerequisites
 * Access to a Databricks workspace.
 * API Key: Register for a free API key at [Alpha Vantage](https://www.alphavantage.co/).
-* Store your key in a local `.env` file (format: `ALPHA_VANTAGE_API_KEY=your_key_here`).
+* Store your key in a local file with the exact name `.env` (format: `ALPHA_VANTAGE_API_KEY=your_key_here`).
 
 ### How to Run
 1. **Connect to Databricks**: Use Databricks Repos to link this GitHub repository.
