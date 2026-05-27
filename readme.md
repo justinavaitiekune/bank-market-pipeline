@@ -7,7 +7,7 @@ The primary challenge of this project was transforming raw, heterogeneous API JS
 ## Architecture & Data Flow
 
 1. **Environment Setup (`00_setup_environment`)**: Runs a SQL DDL script to initialize the target Delta Lake schema (`main.market_project`) if it does not exist.
-2. **Bronze (`01_bronze_ingestion`)**: Ingests raw multi-asset daily price CSV files (generated from Alpha Vantage with strict 3-second API throttling to respect rate limits) directly into Delta format to preserve raw history and data lineage.
+2. **Bronze (`01_bronze_ingestion`)**: Fetches live market data from Alpha Vantage API (JSON format) with strict 3-second throttling to respect rate limits, converts it to Spark DataFrames, and saves directly into Delta format to preserve raw history and data lineage.
 3. **Silver (`02_silver_transformation`)**: Extracts and isolates individual entity metrics (JPM, BAC, C, EURUSD) using a parameterized helper function. Converts data types (`timestamp`, `double`, `long`), filters out secondary text headers via regex (`rlike`), and unpivots the data into a standardized "long-format" relational schema using `union`.
 4. **Gold (`03_gold_transformation`)**: Computes time-series business metrics using Spark Window functions (`Window.partitionBy`). Calculated fields include `daily_return_pct` (via `lag`) and `moving_avg_7d`.
 
@@ -33,7 +33,7 @@ To ensure pipeline reliability, a centralized testing notebook runs automated qu
 * `01_bronze_ingestion.py`: Notebook that imports data_ingestion and persists raw API data into Delta tables.
 * `02_silver_transformation.py`: Formats and converts data types (strings to timestamps and numbers) to prepare data for analytics.
 * `03_gold_transformation.py`: Window functions and financial metrics calculation.
-* `04_data_quality_tests.py`: Computes final financial metrics (daily returns in percent and 7-day moving averages).
+* `04_data_quality_tests.py`: Runs data quality validations and integrity audits across the pipeline.
 
 ## Deployment & Automation
 This project is orchestrated using **Databricks Workflows (Jobs)** and **Databricks Asset Bundles (DABs)**.
